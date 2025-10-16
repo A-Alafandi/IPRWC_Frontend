@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "node server.js",
+    "build": "ng build && ng run ipwrwc-e-commerce-frontend:server:production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:IPWRWC_E_Commerce_Frontend": "node dist/ipwrwc-e-commerce-frontend/server/server.mjs"
+    "serve:ssr": "node dist/ipwrwc-e-commerce-frontend/server/server.mjs",
+    "build:prod": "ng build --configuration production && ng run ipwrwc-e-commerce-frontend:server:production",
+    "railway:build": "npm run build:prod",
+    "railway:start": "node server.js"
   },
   "private": true,
   "dependencies": {
