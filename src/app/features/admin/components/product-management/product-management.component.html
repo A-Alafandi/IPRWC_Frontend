@@ -1,0 +1,411 @@
+<div class="product-management-container">
+  <!-- Background Shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header fade-in">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">Product Management</h1>
+          <p class="page-subtitle">Manage your product catalog and inventory</p>
+        </div>
+      </div>
+      <button class="btn btn-add-product" (click)="openCreateModal()">
+        <i class="bi bi-plus-circle"></i>
+        <span>Add New Product</span>
+      </button>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid fade-in">
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="bi bi-box-seam-fill"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Total Products</span>
+          <span class="stat-value">{{ products.length }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon categories">
+          <i class="bi bi-tags-fill"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Categories</span>
+          <span class="stat-value">{{ categories.length }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon low-stock">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Low Stock</span>
+          <span class="stat-value">{{ getLowStockCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="filters-section fade-in">
+      <div class="filter-card">
+        <div class="filter-header">
+          <i class="bi bi-funnel"></i>
+          <span>Filter by Category</span>
+        </div>
+        <div class="category-filters">
+          <button
+            class="filter-btn"
+            [class.active]="selectedCategory === 'ALL'"
+            (click)="filterByCategory('ALL')">
+            <i class="bi bi-grid"></i>
+            <span>All Products</span>
+            <span class="filter-count">{{ products.length }}</span>
+          </button>
+          <button
+            *ngFor="let category of categories"
+            class="filter-btn"
+            [class.active]="selectedCategory === category"
+            (click)="filterByCategory(category)">
+            <i class="bi bi-tag"></i>
+            <span>{{ category }}</span>
+            <span class="filter-count">{{ getCategoryCount(category) }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="search-card">
+        <div class="search-wrapper">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search products by name..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid/Table -->
+    <div class="products-section fade-in">
+      <!-- View Toggle -->
+      <div class="view-toggle">
+        <button class="toggle-btn" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
+          <i class="bi bi-grid-3x3"></i>
+        </button>
+        <button class="toggle-btn" [class.active]="viewMode === 'table'" (click)="viewMode = 'table'">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+
+      <!-- Grid View -->
+      <div *ngIf="viewMode === 'grid'" class="products-grid">
+        <div class="product-card" *ngFor="let product of filteredProducts; let i = index" [style.animation-delay.ms]="i * 50">
+          <div class="product-image-wrapper">
+            <img [src]="product.image" [alt]="product.name" class="product-image">
+            <div class="product-overlay">
+              <button class="btn-overlay edit" (click)="openEditModal(product)" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn-overlay delete" (click)="deleteProduct(product)" title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <span class="stock-badge"
+                  [class.high]="product.stock > 10"
+                  [class.medium]="product.stock > 0 && product.stock <= 10"
+                  [class.low]="product.stock === 0">
+              <i class="bi"
+                 [class.bi-check-circle]="product.stock > 10"
+                 [class.bi-exclamation-circle]="product.stock > 0 && product.stock <= 10"
+                 [class.bi-x-circle]="product.stock === 0"></i>
+              {{ product.stock }} in stock
+            </span>
+          </div>
+          <div class="product-content">
+            <span class="product-category">
+              <i class="bi bi-tag"></i>
+              {{ product.category }}
+            </span>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description | slice:0:80 }}...</p>
+            <div class="product-footer">
+              <span class="product-price">${{ product.price.toFixed(2) }}</span>
+              <div class="product-actions">
+                <button class="btn-action edit" (click)="openEditModal(product)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn-action delete" (click)="deleteProduct(product)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div *ngIf="viewMode === 'table'" class="products-table-card">
+        <div class="table-header">
+          <div class="table-title">
+            <i class="bi bi-table"></i>
+            <span>Products List ({{ filteredProducts.length }})</span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="modern-table">
+            <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let product of filteredProducts; let i = index" [style.animation-delay.ms]="i * 50">
+              <td>
+                <div class="product-cell">
+                  <img [src]="product.image" [alt]="product.name" class="product-thumbnail">
+                  <div class="product-info">
+                    <span class="product-name">{{ product.name }}</span>
+                    <span class="product-desc">{{ product.description | slice:0:50 }}...</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                  <span class="category-badge">
+                    <i class="bi bi-tag"></i>
+                    {{ product.category }}
+                  </span>
+              </td>
+              <td>
+                <span class="price-cell">${{ product.price.toFixed(2) }}</span>
+              </td>
+              <td>
+                  <span class="stock-badge-table"
+                        [class.high]="product.stock > 10"
+                        [class.medium]="product.stock > 0 && product.stock <= 10"
+                        [class.low]="product.stock === 0">
+                    <i class="bi"
+                       [class.bi-check-circle]="product.stock > 10"
+                       [class.bi-exclamation-circle]="product.stock > 0 && product.stock <= 10"
+                       [class.bi-x-circle]="product.stock === 0"></i>
+                    {{ product.stock }}
+                  </span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-action edit" (click)="openEditModal(product)" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-action delete" (click)="deleteProduct(product)" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+          <!-- Empty State -->
+          <div *ngIf="filteredProducts.length === 0" class="empty-state">
+            <div class="empty-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <h3>No Products Found</h3>
+            <p>{{ searchTerm ? 'Try adjusting your search terms' : 'Add your first product to get started' }}</p>
+            <button class="btn btn-primary" (click)="openCreateModal()">
+              <i class="bi bi-plus-circle"></i>
+              Add Product
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Product Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-card large">
+        <div class="modal-header">
+          <div class="modal-title-wrapper">
+            <div class="modal-icon" [class.edit]="isEditMode">
+              <i class="bi" [class.bi-plus-circle]="!isEditMode" [class.bi-pencil-square]="isEditMode"></i>
+            </div>
+            <div>
+              <h3 class="modal-title">{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h3>
+              <p class="modal-subtitle">{{ isEditMode ? 'Update product information' : 'Create a new product entry' }}</p>
+            </div>
+          </div>
+          <button class="btn-close-modal" (click)="closeModal()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+          <div class="modal-body">
+            <div class="row g-3">
+              <!-- Product Name -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="hasError('name', 'required') || hasError('name', 'minlength')"
+                    formControlName="name"
+                    id="productName"
+                    placeholder="Product Name">
+                  <label for="productName">
+                    <i class="bi bi-box"></i>
+                    Product Name *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="hasError('name', 'required')">
+                    Product name is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('name', 'minlength')">
+                    Must be at least 3 characters
+                  </div>
+                </div>
+              </div>
+
+              <!-- Category -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select
+                    class="form-select"
+                    [class.is-invalid]="hasError('category', 'required')"
+                    formControlName="category"
+                    id="productCategory">
+                    <option value="">Select category</option>
+                    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                  </select>
+                  <label for="productCategory">
+                    <i class="bi bi-tag"></i>
+                    Category *
+                  </label>
+                  <div class="invalid-feedback">Category is required</div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="col-12">
+                <div class="form-floating">
+                  <textarea
+                    class="form-control"
+                    [class.is-invalid]="hasError('description', 'required') || hasError('description', 'minlength')"
+                    formControlName="description"
+                    id="productDescription"
+                    placeholder="Description"
+                    style="height: 100px"></textarea>
+                  <label for="productDescription">
+                    <i class="bi bi-text-paragraph"></i>
+                    Product Description *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="hasError('description', 'required')">
+                    Description is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('description', 'minlength')">
+                    Must be at least 10 characters
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="number"
+                    class="form-control"
+                    [class.is-invalid]="hasError('price', 'required') || hasError('price', 'min')"
+                    formControlName="price"
+                    id="productPrice"
+                    placeholder="0.00"
+                    step="0.01">
+                  <label for="productPrice">
+                    <i class="bi bi-currency-dollar"></i>
+                    Price *
+                  </label>
+                  <div class="invalid-feedback">Price must be greater than 0</div>
+                </div>
+              </div>
+
+              <!-- Stock -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="number"
+                    class="form-control"
+                    [class.is-invalid]="hasError('stock', 'required') || hasError('stock', 'min')"
+                    formControlName="stock"
+                    id="productStock"
+                    placeholder="0">
+                  <label for="productStock">
+                    <i class="bi bi-box-seam"></i>
+                    Stock Quantity *
+                  </label>
+                  <div class="invalid-feedback">Stock must be 0 or greater</div>
+                </div>
+              </div>
+
+              <!-- Image URL -->
+              <div class="col-12">
+                <div class="form-floating">
+                  <input
+                    type="url"
+                    class="form-control"
+                    [class.is-invalid]="hasError('image', 'required')"
+                    formControlName="image"
+                    id="productImage"
+                    placeholder="https://example.com/image.jpg">
+                  <label for="productImage">
+                    <i class="bi bi-image"></i>
+                    Image URL *
+                  </label>
+                  <div class="invalid-feedback">Valid image URL is required</div>
+                </div>
+              </div>
+
+              <!-- Image Preview -->
+              <div class="col-12" *ngIf="productForm.get('image')?.value">
+                <div class="image-preview-card">
+                  <span class="preview-label">
+                    <i class="bi bi-eye"></i>
+                    Image Preview
+                  </span>
+                  <img [src]="productForm.get('image')?.value" alt="Preview" class="image-preview">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" (click)="closeModal()">
+              <i class="bi bi-x-circle"></i>
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-save" [disabled]="productForm.invalid">
+              <i class="bi bi-check-circle"></i>
+              {{ isEditMode ? 'Update Product' : 'Create Product' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

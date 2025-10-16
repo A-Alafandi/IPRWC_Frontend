@@ -1,0 +1,210 @@
+<div class="register-container">
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10">
+        <div class="register-card">
+          <!-- Left Side - Visual Appeal -->
+          <div class="register-visual">
+            <div class="visual-content">
+              <div class="icon-wrapper">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <h2>Join MyShop Community</h2>
+              <p class="visual-text">Create your account and discover amazing products</p>
+            </div>
+          </div>
+
+          <!-- Right Side - Registration Form -->
+          <div class="register-form-side">
+            <div class="form-container">
+
+
+              <!-- Header -->
+              <div class="form-header">
+                <h1>Create Account</h1>
+                <p class="text-muted">Start your shopping journey with us</p>
+              </div>
+
+              <!-- Register Form -->
+              <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+                <div class="row g-3">
+                  <!-- Name Fields -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.is-invalid]="hasError('firstName', 'required') || hasError('firstName', 'minlength')"
+                        formControlName="firstName"
+                        id="firstName"
+                        placeholder="John">
+                      <label for="firstName">First Name *</label>
+                      <div class="invalid-feedback" *ngIf="hasError('firstName', 'required')">
+                        First name is required
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.is-invalid]="hasError('lastName', 'required') || hasError('lastName', 'minlength')"
+                        formControlName="lastName"
+                        id="lastName"
+                        placeholder="Doe">
+                      <label for="lastName">Last Name *</label>
+                      <div class="invalid-feedback" *ngIf="hasError('lastName', 'required')">
+                        Last name is required
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        [class.is-invalid]="hasError('email', 'required') || hasError('email', 'email')"
+                        formControlName="email"
+                        id="email"
+                        placeholder="john.doe@example.com">
+                      <label for="email">Email Address *</label>
+                      <div class="invalid-feedback" *ngIf="hasError('email', 'required')">
+                        Email is required
+                      </div>
+                      <div class="invalid-feedback" *ngIf="hasError('email', 'email')">
+                        Please enter a valid email
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Password -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        [class.is-invalid]="hasError('password', 'required') || hasError('password', 'minlength')"
+                        formControlName="password"
+                        id="password"
+                        placeholder="Password">
+                      <label for="password">Password *</label>
+                      <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+                        <div class="strength-bar" [class]="getPasswordStrength()"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Confirm Password -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="password"
+                        class="form-control"
+                        [class.is-invalid]="hasError('confirmPassword', 'required') || passwordsMismatch()"
+                        formControlName="confirmPassword"
+                        id="confirmPassword"
+                        placeholder="Confirm Password">
+                      <label for="confirmPassword">Confirm Password *</label>
+                      <div class="invalid-feedback" *ngIf="passwordsMismatch()">
+                        Passwords do not match
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Optional Fields Toggle -->
+                  <div class="col-12">
+                    <div class="optional-section">
+                      <button type="button" class="btn-optional-toggle" (click)="toggleOptionalFields()">
+                        <i class="bi" [class.bi-chevron-down]="!showOptionalFields" [class.bi-chevron-up]="showOptionalFields"></i>
+                        Additional Information (Optional)
+                      </button>
+
+                      <div class="optional-fields" [class.show]="showOptionalFields">
+                        <div class="row g-3 mt-2">
+                          <div class="col-12">
+                            <div class="form-floating">
+                              <input type="text" class="form-control" formControlName="address" id="address" placeholder="Address">
+                              <label for="address">Address</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-floating">
+                              <input type="text" class="form-control" formControlName="city" id="city" placeholder="City">
+                              <label for="city">City</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-floating">
+                              <input type="text" class="form-control" formControlName="state" id="state" placeholder="State">
+                              <label for="state">State</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-floating">
+                              <input type="text" class="form-control" formControlName="zipCode" id="zipCode" placeholder="Zip Code">
+                              <label for="zipCode">Zip Code</label>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="form-floating">
+                              <input type="text" class="form-control" formControlName="country" id="country" placeholder="Country">
+                              <label for="country">Country</label>
+                            </div>
+                          </div>
+
+                          <div class="col-12">
+                            <div class="form-floating">
+                              <input type="tel" class="form-control" formControlName="phoneNumber" id="phoneNumber" placeholder="Phone Number">
+                              <label for="phoneNumber">Phone Number</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-register w-100 mt-4"
+                  [disabled]="isLoading || !registerForm.valid">
+                  <span *ngIf="!isLoading">
+                    <i class="bi bi-person-add"></i>
+                    Create Account
+                  </span>
+                  <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Creating Your Account...
+                  </span>
+                </button>
+
+                <!-- Login Link -->
+                <div class="text-center mt-4">
+                  <p class="mb-0 text-muted">
+                    Already have an account?
+                    <a routerLink="/login" class="login-link fw-semibold">Sign in here</a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

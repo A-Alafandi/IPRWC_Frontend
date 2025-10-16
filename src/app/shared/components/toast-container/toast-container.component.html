@@ -1,0 +1,36 @@
+<div class="toast-container">
+  <div
+    *ngFor="let toast of toasts"
+    class="toast-notification"
+    [ngClass]="'toast-' + toast.type"
+    role="alert"
+    @slideInOut
+  >
+    <!-- Toast Icon & Content -->
+    <div class="toast-content">
+      <div class="toast-icon">
+        <i class="bi" [ngClass]="getToastIcon(toast.type)"></i>
+      </div>
+
+      <div class="toast-message">
+        <div class="toast-title">{{ toast.type | titlecase }}</div>
+        <div class="toast-text">{{ toast.message }}</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="toast-progress" [ngClass]="'progress-' + toast.type">
+      <div class="progress-bar"></div>
+    </div>
+
+    <!-- Close Button -->
+    <button
+      type="button"
+      class="toast-close"
+      (click)="removeToast(toast.id)"
+      aria-label="Close"
+    >
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+</div>

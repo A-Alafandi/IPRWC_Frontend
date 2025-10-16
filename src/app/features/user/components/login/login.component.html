@@ -1,0 +1,108 @@
+<div class="login-container">
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10">
+        <div class="login-card">
+          <!-- Left Side - Visual Appeal -->
+          <div class="login-visual">
+            <div class="visual-content">
+              <div class="icon-wrapper">
+                <i class="bi bi-shop-window"></i>
+              </div>
+              <h2>Welcome Back to MyShop eCommerce</h2>
+              <p class="visual-text">Continue your shopping journey with personalized recommendations and exclusive deals</p>
+              <!-- Quick Login Info - Styled Better -->
+              <div class="quick-login-info">
+                <h5>Demo Accounts</h5>
+                <div class="demo-account">
+                  <strong>Admin:</strong> admin&#64;myshop.com / admin123
+                </div>
+                <div class="demo-account">
+                  <strong>User:</strong> user&#64;myshop.com / user123
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Side - Login Form -->
+          <div class="login-form-side">
+            <div class="form-container">
+              <!-- Header -->
+              <div class="form-header">
+                <h1>Welcome Back</h1>
+                <p class="text-muted">Sign in to your MyShop account</p>
+              </div>
+
+              <!-- Login Form -->
+              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+                <!-- Email -->
+                <div class="form-floating mb-3">
+                  <input
+                    type="email"
+                    class="form-control"
+                    [class.is-invalid]="hasError('email', 'required') || hasError('email', 'email')"
+                    formControlName="email"
+                    id="email"
+                    placeholder="name@example.com">
+                  <label for="email">Email Address</label>
+                  <div class="invalid-feedback" *ngIf="hasError('email', 'required')">
+                    Email is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('email', 'email')">
+                    Please enter a valid email
+                  </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-floating mb-4">
+                  <input
+                    type="password"
+                    class="form-control"
+                    [class.is-invalid]="hasError('password', 'required') || hasError('password', 'minlength')"
+                    formControlName="password"
+                    id="password"
+                    placeholder="Password">
+                  <label for="password">Password</label>
+                  <div class="invalid-feedback" *ngIf="hasError('password', 'required')">
+                    Password is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('password', 'minlength')">
+                    Password must be at least 6 characters
+                  </div>
+                </div>
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-login w-100 mb-4"
+                  [disabled]="isLoading">
+                  <span *ngIf="!isLoading">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Sign In
+                  </span>
+                  <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Signing In...
+                  </span>
+                </button>
+
+                <!-- Register Link -->
+                <div class="text-center">
+                  <p class="mb-0 text-muted">
+                    Don't have an account?
+                    <a routerLink="/register" class="register-link fw-semibold">Create one here</a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

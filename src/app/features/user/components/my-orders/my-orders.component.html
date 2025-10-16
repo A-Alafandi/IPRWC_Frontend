@@ -1,0 +1,294 @@
+<div class="my-orders-container">
+  <!-- Background Shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="bi bi-receipt"></i>
+        </div>
+        <h1 class="page-title">My Orders</h1>
+        <p class="page-subtitle">Track and manage your order history</p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-section">
+      <div class="loading-spinner">
+        <div class="spinner-circle"></div>
+        <div class="spinner-text">Loading your orders...</div>
+      </div>
+    </div>
+
+    <!-- Orders Timeline -->
+    <div *ngIf="!isLoading && orders.length > 0" class="orders-timeline">
+      <div class="orders-stats">
+        <div class="stat-card">
+          <div class="stat-icon pending">
+            <i class="bi bi-clock"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ getOrdersByStatus(OrderStatus.PENDING).length }}</div>
+            <div class="stat-label">Pending</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon processing">
+            <i class="bi bi-gear"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ getOrdersByStatus(OrderStatus.PROCESSING).length }}</div>
+            <div class="stat-label">Processing</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon shipped">
+            <i class="bi bi-truck"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ getOrdersByStatus(OrderStatus.SHIPPED).length }}</div>
+            <div class="stat-label">Shipped</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon delivered">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ getOrdersByStatus(OrderStatus.DELIVERED).length }}</div>
+            <div class="stat-label">Delivered</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders List -->
+      <div class="orders-list">
+        <div class="order-card" *ngFor="let order of orders" (click)="viewOrderDetails(order)">
+          <div class="order-header">
+            <div class="order-meta">
+              <h3 class="order-number">Order #{{ order.id }}</h3>
+              <span class="order-date">{{ order.createdAt | date:'MMM d, y, h:mm a' }}</span>
+            </div>
+            <div class="order-status">
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+                {{ order.status }}
+              </span>
+            </div>
+          </div>
+
+          <div class="order-content">
+            <div class="order-items-preview">
+              <div class="items-grid">
+                <div class="item-preview" *ngFor="let item of order.items.slice(0, 3)">
+                  <img [src]="item.product.image" [alt]="item.product.name" class="item-image">
+                  <div class="item-overlay">
+                    <span class="item-quantity">x{{ item.quantity }}</span>
+                  </div>
+                </div>
+                <div class="more-items" *ngIf="order.items.length > 3">
+                  +{{ order.items.length - 3 }} more
+                </div>
+              </div>
+            </div>
+
+            <div class="order-summary">
+              <div class="summary-item">
+                <span class="summary-label">Items</span>
+                <span class="summary-value">{{ order.items.length }} item(s)</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Total</span>
+                <span class="summary-value total-amount">${{ order.totalAmount.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button class="action-btn view-details" (click)="viewOrderDetails(order); $event.stopPropagation()">
+              <i class="bi bi-eye"></i>
+              View Details
+            </button>
+            <button class="action-btn reorder" *ngIf="order.status === 'DELIVERED'">
+              <i class="bi bi-arrow-repeat"></i>
+              Reorder
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && orders.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="bi bi-cart-x"></i>
+      </div>
+      <h3 class="empty-title">No Orders Yet</h3>
+      <p class="empty-description">
+        You haven't placed any orders yet. Start shopping to see your order history here!
+      </p>
+      <a routerLink="/products" class="cta-button">
+        <i class="bi bi-shop"></i>
+        Start Shopping
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal-backdrop" [class.show]="showDetailsModal" (click)="closeDetailsModal()"></div>
+
+<div class="order-modal" [class.show]="showDetailsModal">
+  <div class="modal-content" *ngIf="selectedOrder">
+    <div class="modal-header">
+      <div class="modal-title-section">
+        <h2 class="modal-title">Order Details</h2>
+        <p class="modal-subtitle">Order #{{ selectedOrder.id }}</p>
+      </div>
+      <button class="close-btn" (click)="closeDetailsModal()">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Order Overview -->
+      <div class="order-overview">
+        <div class="overview-item">
+          <div class="overview-icon">
+            <i class="bi bi-calendar"></i>
+          </div>
+          <div class="overview-info">
+            <span class="overview-label">Order Date</span>
+            <span class="overview-value">{{ selectedOrder.createdAt | date:'fullDate' }}</span>
+          </div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-icon">
+            <i class="bi bi-clock"></i>
+          </div>
+          <div class="overview-info">
+            <span class="overview-label">Order Time</span>
+            <span class="overview-value">{{ selectedOrder.createdAt | date:'shortTime' }}</span>
+          </div>
+        </div>
+        <div class="overview-item">
+          <div class="overview-icon">
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <div class="overview-info">
+            <span class="overview-label">Shipping Address</span>
+            <span class="overview-value">{{ selectedOrder.shippingAddress }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Timeline -->
+      <div class="status-timeline">
+        <h3 class="timeline-title">Order Status</h3>
+        <div class="timeline">
+          <div class="timeline-step" [class.active]="isStepActive('PENDING')" [class.completed]="isStepCompleted('PENDING')">
+            <div class="step-icon">
+              <i class="bi bi-cart"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-label">Order Placed</span>
+              <span class="step-date">Order confirmed</span>
+            </div>
+          </div>
+          <div class="timeline-step" [class.active]="isStepActive('PROCESSING')" [class.completed]="isStepCompleted('PROCESSING')">
+            <div class="step-icon">
+              <i class="bi bi-gear"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-label">Processing</span>
+              <span class="step-date">Preparing your order</span>
+            </div>
+          </div>
+          <div class="timeline-step" [class.active]="isStepActive('SHIPPED')" [class.completed]="isStepCompleted('SHIPPED')">
+            <div class="step-icon">
+              <i class="bi bi-truck"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-label">Shipped</span>
+              <span class="step-date">On the way</span>
+            </div>
+          </div>
+          <div class="timeline-step" [class.active]="isStepActive('DELIVERED')" [class.completed]="isStepCompleted('DELIVERED')">
+            <div class="step-icon">
+              <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="step-info">
+              <span class="step-label">Delivered</span>
+              <span class="step-date">Order completed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <div class="order-items-section">
+        <h3 class="section-title">Order Items</h3>
+        <div class="items-list">
+          <div class="order-item" *ngFor="let item of selectedOrder.items">
+            <img [src]="item.product.image" [alt]="item.product.name" class="item-image">
+            <div class="item-details">
+              <h4 class="item-name">{{ item.product.name }}</h4>
+              <p class="item-category">{{ item.product.category }}</p>
+              <div class="item-meta">
+                <span class="meta-item">
+                  <i class="bi bi-tag"></i>
+                  ${{ item.price.toFixed(2) }} each
+                </span>
+              </div>
+            </div>
+            <div class="item-quantity">
+              <span class="quantity-badge">x{{ item.quantity }}</span>
+            </div>
+            <div class="item-total">
+              ${{ (item.price * item.quantity).toFixed(2) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary-section">
+        <h3 class="section-title">Order Summary</h3>
+        <div class="summary-grid">
+          <div class="summary-row">
+            <span class="summary-label">Subtotal</span>
+            <span class="summary-value">${{ selectedOrder.totalAmount.toFixed(2) }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Shipping</span>
+            <span class="summary-value">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Tax</span>
+            <span class="summary-value">$0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span class="summary-label">Total</span>
+            <span class="summary-value">${{ selectedOrder.totalAmount.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeDetailsModal()">
+        <i class="bi bi-arrow-left"></i>
+        Back to Orders
+      </button>
+      <button class="btn btn-primary" *ngIf="selectedOrder.status === 'DELIVERED'">
+        <i class="bi bi-arrow-repeat"></i>
+        Reorder Items
+      </button>
+    </div>
+  </div>
+</div>

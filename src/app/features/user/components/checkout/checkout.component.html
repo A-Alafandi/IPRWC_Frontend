@@ -1,0 +1,331 @@
+<div class="checkout-container">
+  <!-- Background Shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header fade-in">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="bi bi-bag-check"></i>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">Secure Checkout</h1>
+          <p class="page-subtitle">Complete your order in just a few steps</p>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <!-- Checkout Form -->
+      <div class="col-lg-7">
+        <div class="checkout-card fade-in">
+          <!-- Shipping Information -->
+          <div class="card-section">
+            <div class="section-header">
+              <i class="bi bi-geo-alt"></i>
+              <h3>Shipping Information</h3>
+            </div>
+
+            <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+              <div class="row g-3">
+                <!-- First Name -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('firstName', 'required') || hasError('firstName', 'minlength')"
+                      formControlName="firstName"
+                      id="firstName"
+                      placeholder="John">
+                    <label for="firstName">
+                      <i class="bi bi-person"></i>
+                      First Name *
+                    </label>
+                    <div class="invalid-feedback">
+                      First name is required (min 2 characters)
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('lastName', 'required') || hasError('lastName', 'minlength')"
+                      formControlName="lastName"
+                      id="lastName"
+                      placeholder="Doe">
+                    <label for="lastName">
+                      <i class="bi bi-person"></i>
+                      Last Name *
+                    </label>
+                    <div class="invalid-feedback">
+                      Last name is required (min 2 characters)
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="email"
+                      class="form-control"
+                      [class.is-invalid]="hasError('email', 'required') || hasError('email', 'email')"
+                      formControlName="email"
+                      id="email"
+                      placeholder="john.doe@example.com">
+                    <label for="email">
+                      <i class="bi bi-envelope"></i>
+                      Email Address *
+                    </label>
+                    <div class="invalid-feedback">
+                      Valid email is required
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="tel"
+                    class="form-control"
+                    [class.is-invalid]="hasError('phoneNumber', 'required') || hasError('phoneNumber', 'pattern')"
+                    formControlName="phoneNumber"
+                    id="phoneNumber"
+                    placeholder="+1 (555) 123-4567">
+                    <label for="phone">
+                      <i class="bi bi-telephone"></i>
+                      Phone Number *
+                    </label>
+                    <div class="invalid-feedback">
+                      Phone number is required
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Street Address -->
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('address', 'required') || hasError('address', 'minlength')"
+                      formControlName="address"
+                      id="address"
+                      placeholder="123 Main Street, Apt 4B">
+                    <label for="address">
+                      <i class="bi bi-house"></i>
+                      Street Address *
+                    </label>
+                    <div class="invalid-feedback">
+                      Address is required (min 5 characters)
+                    </div>
+                  </div>
+                </div>
+
+                <!-- City -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('city', 'required')"
+                      formControlName="city"
+                      id="city"
+                      placeholder="New York">
+                    <label for="city">
+                      <i class="bi bi-building"></i>
+                      City *
+                    </label>
+                    <div class="invalid-feedback">
+                      City is required
+                    </div>
+                  </div>
+                </div>
+
+                <!-- State -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('state', 'required')"
+                      formControlName="state"
+                      id="state"
+                      placeholder="NY">
+                    <label for="state">
+                      <i class="bi bi-map"></i>
+                      State / Province *
+                    </label>
+                    <div class="invalid-feedback">
+                      State is required
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Zip Code -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('zipCode', 'required')"
+                      formControlName="zipCode"
+                      id="zipCode"
+                      placeholder="10001">
+                    <label for="zipCode">
+                      <i class="bi bi-mailbox"></i>
+                      Zip / Postal Code *
+                    </label>
+                    <div class="invalid-feedback">
+                      Zip code is required
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Country -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      [class.is-invalid]="hasError('country', 'required')"
+                      formControlName="country"
+                      id="country"
+                      placeholder="USA">
+                    <label for="country">
+                      <i class="bi bi-globe"></i>
+                      Country *
+                    </label>
+                    <div class="invalid-feedback">
+                      Country is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- Security Badges -->
+          <div class="security-badges">
+            <div class="badge-item">
+              <i class="bi bi-shield-check"></i>
+              <span>Secure Payment</span>
+            </div>
+            <div class="badge-item">
+              <i class="bi bi-lock"></i>
+              <span>SSL Encrypted</span>
+            </div>
+            <div class="badge-item">
+              <i class="bi bi-arrow-clockwise"></i>
+              <span>Easy Returns</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-lg-5">
+        <div class="summary-card sticky-card fade-in">
+          <div class="summary-header">
+            <i class="bi bi-receipt"></i>
+            <h3>Order Summary</h3>
+          </div>
+
+          <!-- Cart Items -->
+          <div class="cart-items">
+            <div class="cart-item" *ngFor="let item of cart.items">
+              <div class="item-image">
+                <img
+                  [src]="item.product.image"
+                  [alt]="item.product.name"
+                  loading="lazy">
+              </div>
+              <div class="item-details">
+                <h4 class="item-name">{{ item.product.name }}</h4>
+                <p class="item-quantity">Quantity: {{ item.quantity }}</p>
+              </div>
+              <div class="item-price">
+                ${{ (item.product.price * item.quantity).toFixed(2) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Price Breakdown -->
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span class="price-label">
+                <i class="bi bi-cart"></i>
+                Subtotal ({{ cart.totalItems }} items)
+              </span>
+              <span class="price-value">${{ cart.totalAmount.toFixed(2) }}</span>
+            </div>
+            <div class="price-row">
+              <span class="price-label">
+                <i class="bi bi-receipt"></i>
+                Tax (10%)
+              </span>
+              <span class="price-value">${{ (cart.totalAmount * 0.1).toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <!-- Total -->
+          <div class="total-section">
+            <div class="total-row">
+              <span class="total-label">Total Amount</span>
+              <span class="total-value">${{ (cart.totalAmount * 1.1).toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button
+              type="submit"
+              class="btn btn-place-order"
+              [disabled]="isSubmitting || checkoutForm.invalid"
+              (click)="onSubmit()">
+              <span *ngIf="!isSubmitting">
+                <i class="bi bi-credit-card"></i>
+                Place Order
+              </span>
+              <span *ngIf="isSubmitting">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Processing...
+              </span>
+            </button>
+
+            <a routerLink="/cart" class="btn btn-back-to-cart">
+              <i class="bi bi-arrow-left"></i>
+              Back to Cart
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Processing Overlay -->
+  <div class="processing-overlay" *ngIf="isSubmitting">
+    <div class="processing-animation">
+      <div class="processing-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <h3>Processing Your Order</h3>
+      <p>Please wait while we confirm your purchase...</p>
+    </div>
+  </div>
+</div>

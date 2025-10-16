@@ -1,0 +1,307 @@
+<div class="profile-container">
+  <!-- Background Shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-10">
+        <!-- Page Header -->
+        <div class="page-header fade-in">
+          <div class="header-content">
+            <div class="header-text">
+              <h1 class="page-title">My Profile</h1>
+              <p class="page-subtitle">Manage your personal information and preferences</p>
+            </div>
+            <div class="header-actions">
+              <button
+                *ngIf="!isEditing"
+                class="btn btn-edit"
+                (click)="enableEdit()">
+                <i class="bi bi-pencil-square"></i>
+                <span>Edit Profile</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card fade-in">
+          <!-- Profile Header Section -->
+          <div class="profile-header">
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+              <div class="avatar-wrapper">
+                <div class="user-avatar-large">
+                  {{ currentUser?.firstName?.charAt(0) }}{{ currentUser?.lastName?.charAt(0) }}
+                </div>
+                <button class="avatar-edit-btn" *ngIf="isEditing" title="Change Avatar">
+                  <i class="bi bi-camera-fill"></i>
+                </button>
+              </div>
+
+              <div class="user-info">
+                <h2 class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</h2>
+                <span class="user-role-badge" [class.admin]="currentUser?.role === 'ADMIN'" [class.user]="currentUser?.role === 'USER'">
+                  <i class="bi" [class.bi-shield-check]="currentUser?.role === 'ADMIN'" [class.bi-person-circle]="currentUser?.role === 'USER'"></i>
+                  {{ currentUser?.role }}
+                </span>
+                <p class="user-email">
+                  <i class="bi bi-envelope"></i>
+                  {{ currentUser?.email }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Form -->
+          <div class="profile-form-section">
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+              <!-- Personal Information Section -->
+              <div class="form-section">
+                <div class="section-header">
+                  <i class="bi bi-person-vcard"></i>
+                  <h3>Personal Information</h3>
+                </div>
+
+                <div class="row g-3">
+                  <!-- First Name -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.is-invalid]="hasError('firstName', 'required') || hasError('firstName', 'minlength')"
+                        formControlName="firstName"
+                        id="firstName"
+                        placeholder="John">
+                      <label for="firstName">
+                        <i class="bi bi-person"></i>
+                        First Name *
+                      </label>
+                      <div class="invalid-feedback" *ngIf="hasError('firstName', 'required')">
+                        First name is required
+                      </div>
+                      <div class="invalid-feedback" *ngIf="hasError('firstName', 'minlength')">
+                        Must be at least 2 characters
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Last Name -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.is-invalid]="hasError('lastName', 'required') || hasError('lastName', 'minlength')"
+                        formControlName="lastName"
+                        id="lastName"
+                        placeholder="Doe">
+                      <label for="lastName">
+                        <i class="bi bi-person"></i>
+                        Last Name *
+                      </label>
+                      <div class="invalid-feedback" *ngIf="hasError('lastName', 'required')">
+                        Last name is required
+                      </div>
+                      <div class="invalid-feedback" *ngIf="hasError('lastName', 'minlength')">
+                        Must be at least 2 characters
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        [class.is-invalid]="hasError('email', 'required') || hasError('email', 'email')"
+                        formControlName="email"
+                        id="email"
+                        placeholder="john.doe@example.com">
+                      <label for="email">
+                        <i class="bi bi-envelope"></i>
+                        Email Address *
+                      </label>
+                      <div class="invalid-feedback" *ngIf="hasError('email', 'required')">
+                        Email is required
+                      </div>
+                      <div class="invalid-feedback" *ngIf="hasError('email', 'email')">
+                        Please enter a valid email
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Phone Number -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="tel"
+                        class="form-control"
+                        formControlName="phoneNumber"
+                        id="phoneNumber"
+                        placeholder="+1 (555) 123-4567">
+                      <label for="phoneNumber">
+                        <i class="bi bi-telephone"></i>
+                        Phone Number
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address Information Section -->
+              <div class="form-section">
+                <div class="section-header">
+                  <i class="bi bi-geo-alt"></i>
+                  <h3>Address Information</h3>
+                </div>
+
+                <div class="row g-3">
+                  <!-- Street Address -->
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="address"
+                        id="address"
+                        placeholder="123 Main Street, Apt 4B">
+                      <label for="address">
+                        <i class="bi bi-house"></i>
+                        Street Address
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- City -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="city"
+                        id="city"
+                        placeholder="New York">
+                      <label for="city">
+                        <i class="bi bi-building"></i>
+                        City
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- State -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="state"
+                        id="state"
+                        placeholder="NY">
+                      <label for="state">
+                        <i class="bi bi-map"></i>
+                        State / Province
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Zip Code -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="zipCode"
+                        id="zipCode"
+                        placeholder="10001">
+                      <label for="zipCode">
+                        <i class="bi bi-mailbox"></i>
+                        Zip / Postal Code
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Country -->
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="country"
+                        id="country"
+                        placeholder="USA">
+                      <label for="country">
+                        <i class="bi bi-globe"></i>
+                        Country
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account Information -->
+              <div class="account-info-card">
+                <div class="info-item">
+                  <i class="bi bi-calendar-check"></i>
+                  <div class="info-content">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value">{{ currentUser?.createdAt | date:'longDate' }}</span>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <i class="bi bi-clock-history"></i>
+                  <div class="info-content">
+                    <span class="info-label">Account Created</span>
+                    <span class="info-value">{{ currentUser?.createdAt | date:'short' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="form-actions" *ngIf="isEditing">
+                <button
+                  type="button"
+                  class="btn btn-cancel"
+                  (click)="cancelEdit()"
+                  [disabled]="isSubmitting">
+                  <i class="bi bi-x-circle"></i>
+                  <span>Cancel</span>
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-save"
+                  [disabled]="isSubmitting || profileForm.invalid">
+                  <span *ngIf="!isSubmitting">
+                    <i class="bi bi-check-circle"></i>
+                    Save Changes
+                  </span>
+                  <span *ngIf="isSubmitting">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Saving...
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Animation Overlay -->
+  <div class="success-overlay" *ngIf="showSuccessAnimation">
+    <div class="success-animation">
+      <div class="success-icon">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <h3>Profile Updated!</h3>
+      <p>Your changes have been saved successfully</p>
+    </div>
+  </div>
+</div>

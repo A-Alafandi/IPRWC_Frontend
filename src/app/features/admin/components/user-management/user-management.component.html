@@ -1,0 +1,296 @@
+<div class="user-management-container">
+  <!-- Background Shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header fade-in">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="bi bi-people"></i>
+        </div>
+        <div class="header-text">
+          <h1 class="page-title">User Management</h1>
+          <p class="page-subtitle">Manage system users and permissions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid fade-in">
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Total Users</span>
+          <span class="stat-value">{{ users.length }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon admin">
+          <i class="bi bi-shield-fill-check"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Admins</span>
+          <span class="stat-value">{{ getAdminCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="filters-section fade-in">
+      <div class="filter-card">
+        <div class="filter-header">
+          <i class="bi bi-funnel"></i>
+          <span>Filter by Role</span>
+        </div>
+        <div class="role-filters">
+          <button
+            class="filter-btn"
+            [class.active]="selectedRole === 'ALL'"
+            (click)="filterByRole('ALL')">
+            <i class="bi bi-people"></i>
+            <span>All Users</span>
+            <span class="filter-count">{{ users.length }}</span>
+          </button>
+          <button
+            *ngFor="let role of userRoles"
+            class="filter-btn"
+            [class.active]="selectedRole === role"
+            (click)="filterByRole(role)">
+            <i class="bi" [class.bi-shield-check]="role === 'ADMIN'" [class.bi-person]="role === 'USER'"></i>
+            <span>{{ role }}s</span>
+            <span class="filter-count">{{ getRoleCount(role) }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="search-card">
+        <div class="search-wrapper">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search by name or email ..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="users-table-card fade-in">
+      <div class="table-header">
+        <div class="table-title">
+          <i class="bi bi-table"></i>
+          <span>Users List ({{ filteredUsers.length }})</span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined Date</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let user of filteredUsers; let i = index" [style.animation-delay.ms]="i * 50">
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar-small">
+                  {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+                </div>
+                <div class="user-info">
+                  <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="email-cell">
+                <i class="bi bi-envelope"></i>
+                <span>{{ user.email }}</span>
+              </div>
+            </td>
+            <td>
+                <span class="role-badge" [class.admin]="user.role === 'ADMIN'" [class.user]="user.role === 'USER'">
+                  <i class="bi" [class.bi-shield-fill-check]="user.role === 'ADMIN'" [class.bi-person-circle]="user.role === 'USER'"></i>
+                  {{ user.role }}
+                </span>
+            </td>
+            <td>
+              <div class="date-cell">
+                <i class="bi bi-calendar"></i>
+                <span>{{ user.createdAt | date:'mediumDate' }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action edit" (click)="openEditModal(user)" title="Edit User">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn-action toggle" (click)="toggleRole(user)" title="Toggle Role">
+                  <i class="bi bi-arrow-left-right"></i>
+                </button>
+                <button class="btn-action delete" (click)="deleteUser(user)" [disabled]="user.id === 1" title="Delete User">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="filteredUsers.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="bi bi-people"></i>
+          </div>
+          <h3>No Users Found</h3>
+          <p>{{ searchTerm ? 'Try adjusting your search terms' : 'No users match the selected filters' }}</p>
+          <button class="btn btn-primary" (click)="filterByRole('ALL'); searchTerm = ''; onSearch()">
+            <i class="bi bi-arrow-clockwise"></i>
+            Reset Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit User Modal -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrapper">
+            <div class="modal-icon" [class.edit]="isEditMode">
+              <i class="bi" [class.bi-person-plus]="!isEditMode" [class.bi-pencil-square]="isEditMode"></i>
+            </div>
+            <div>
+              <h3 class="modal-title">{{ isEditMode ? 'Edit User' : 'Add New User' }}</h3>
+              <p class="modal-subtitle">{{ isEditMode ? 'Update user information' : 'Create a new user account' }}</p>
+            </div>
+          </div>
+          <button class="btn-close-modal" (click)="closeModal()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+          <div class="modal-body">
+            <div class="row g-3">
+              <!-- First Name -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="hasError('firstName', 'required') || hasError('firstName', 'minlength')"
+                    formControlName="firstName"
+                    id="modalFirstName"
+                    placeholder="John">
+                  <label for="modalFirstName">
+                    <i class="bi bi-person"></i>
+                    First Name *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="hasError('firstName', 'required')">
+                    First name is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('firstName', 'minlength')">
+                    Must be at least 2 characters
+                  </div>
+                </div>
+              </div>
+
+              <!-- Last Name -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="hasError('lastName', 'required') || hasError('lastName', 'minlength')"
+                    formControlName="lastName"
+                    id="modalLastName"
+                    placeholder="Doe">
+                  <label for="modalLastName">
+                    <i class="bi bi-person"></i>
+                    Last Name *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="hasError('lastName', 'required')">
+                    Last name is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('lastName', 'minlength')">
+                    Must be at least 2 characters
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-12">
+                <div class="form-floating">
+                  <input
+                    type="email"
+                    class="form-control"
+                    [class.is-invalid]="hasError('email', 'required') || hasError('email', 'email')"
+                    formControlName="email"
+                    id="modalEmail"
+                    placeholder="user@example.com">
+                  <label for="modalEmail">
+                    <i class="bi bi-envelope"></i>
+                    Email Address *
+                  </label>
+                  <div class="invalid-feedback" *ngIf="hasError('email', 'required')">
+                    Email is required
+                  </div>
+                  <div class="invalid-feedback" *ngIf="hasError('email', 'email')">
+                    Please enter a valid email
+                  </div>
+                </div>
+              </div>
+
+              <!-- Role -->
+              <div class="col-12">
+                <div class="form-floating">
+                  <select
+                    class="form-select"
+                    [class.is-invalid]="hasError('role', 'required')"
+                    formControlName="role"
+                    id="modalRole">
+                    <option value="USER">USER</option>
+                    <option value="ADMIN">ADMIN</option>
+                  </select>
+                  <label for="modalRole">
+                    <i class="bi bi-shield"></i>
+                    User Role *
+                  </label>
+                  <div class="invalid-feedback">Role is required</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-cancel" (click)="closeModal()">
+              <i class="bi bi-x-circle"></i>
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-save" [disabled]="userForm.invalid">
+              <i class="bi bi-check-circle"></i>
+              {{ isEditMode ? 'Update User' : 'Create User' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

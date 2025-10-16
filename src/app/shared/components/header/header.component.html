@@ -1,0 +1,120 @@
+<header class="main-header">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <!-- Brand/Logo -->
+      <a class="navbar-brand" routerLink="/">
+        <div class="brand-wrapper">
+          <i class="bi bi-shop-window"></i>
+          <span class="brand-text">MyShop</span>
+          <div class="brand-underline"></div>
+        </div>
+      </a>
+
+      <!-- Mobile Toggle Button -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon">
+          <i class="bi bi-list"></i>
+        </span>
+      </button>
+
+      <!-- Navigation Links -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Primary Navigation -->
+        <ul class="navbar-nav nav-primary">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products" routerLinkActive="active">
+              <i class="bi bi-grid"></i>
+              <span class="nav-text">Products</span>
+              <div class="nav-underline"></div>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Right Side Navigation -->
+        <ul class="navbar-nav nav-secondary">
+          <!-- Shopping Cart -->
+          <li class="nav-item cart-item">
+            <a class="nav-link cart-link" routerLink="/cart">
+              <div class="cart-icon-wrapper">
+                <i class="bi bi-cart3"></i>
+                <span
+                  class="cart-badge"
+                  *ngIf="cartItemCount > 0"
+                >
+                  {{ cartItemCount }}
+                </span>
+              </div>
+              <span class="nav-text">Cart</span>
+            </a>
+          </li>
+
+          <!-- Admin Link (if user is admin) -->
+          <li class="nav-item" *ngIf="isAdmin">
+            <a class="nav-link admin-link" routerLink="/admin">
+              <i class="bi bi-shield-check"></i>
+              <span class="nav-text">Admin</span>
+            </a>
+          </li>
+
+          <!-- User Dropdown -->
+          <li class="nav-item dropdown user-dropdown" *ngIf="currentUser">
+            <a
+              class="nav-link dropdown-toggle user-link"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <div class="user-avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="user-info">
+                <span class="user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+                <span class="user-role" *ngIf="isAdmin">Administrator</span>
+                <span class="user-role" *ngIf="!isAdmin">Member</span>
+              </div>
+              <i class="bi bi-chevron-down dropdown-arrow"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" routerLink="/profile">
+                  <i class="bi bi-person"></i>
+                  <span>My Profile</span>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" routerLink="/my-orders">
+                  <i class="bi bi-box-seam"></i>
+                  <span>My Orders</span>
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item logout-item" href="#" (click)="logout(); $event.preventDefault()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Logout</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Login Link -->
+          <li class="nav-item" *ngIf="!currentUser">
+            <a class="nav-link login-link" routerLink="/login">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span class="nav-text">Login</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

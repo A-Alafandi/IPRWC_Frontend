@@ -1,0 +1,122 @@
+<div class="order-confirmation-container">
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-8">
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading your order details...</div>
+          </div>
+        </div>
+
+        <!-- Order Confirmation -->
+        <div *ngIf="!isLoading && order" class="confirmation-card">
+          <div class="card-body">
+            <!-- Success Animation -->
+            <div class="success-animation">
+              <div class="success-icon">
+                <i class="bi bi-check2-all"></i>
+              </div>
+              <div class="confetti" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+            </div>
+
+            <!-- Thank You Message -->
+            <div class="confirmation-header">
+              <h1 class="thank-you-title">Order Confirmed!</h1>
+              <p class="confirmation-message">
+                Thank you for your purchase! Your order has been successfully placed and is being processed.
+              </p>
+            </div>
+
+            <!-- Order Details -->
+            <div class="order-details-card">
+              <div class="detail-row">
+                <span class="detail-label">Order ID</span>
+                <span class="detail-value order-id">#{{ order.id }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Total Amount</span>
+                <span class="detail-value total-amount">${{ order.totalAmount.toFixed(2) }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Status</span>
+                <span>
+                  {{ order.status }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-items-section">
+              <h5 class="section-title">
+                <i class="bi bi-box-seam"></i>
+                Order Items
+              </h5>
+              <div class="items-list">
+                <div class="order-item" *ngFor="let item of order.items">
+                  <div class="item-content">
+                    <div class="item-info">
+                      <div class="item-name">{{ item.product.name }}</div>
+                      <div class="item-meta">
+                        <span class="meta-item">
+                          <i class="bi bi-hash"></i>
+                          Quantity: {{ item.quantity }}
+                        </span>
+                        <span class="meta-item">
+                          <i class="bi bi-currency-dollar"></i>
+                          Unit Price: ${{ item.price.toFixed(2) }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="item-price">${{ (item.price * item.quantity).toFixed(2) }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="shipping-section">
+              <h5 class="section-title">
+                <i class="bi bi-geo-alt"></i>
+                Shipping Address
+              </h5>
+              <div class="shipping-address">
+                {{ order.shippingAddress }}
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <a routerLink="/products" class="btn btn-primary">
+                <i class="bi bi-arrow-left"></i>
+                Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="!isLoading && !order" class="error-state">
+          <div class="error-icon">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+          <h3 class="error-title">Order Not Found</h3>
+          <p class="error-description">
+            {{ error || 'We couldn\'t find the order you\'re looking for. It may have been moved or deleted.' }}
+          </p>
+          <a routerLink="/products" class="back-btn">
+            <i class="bi bi-arrow-left"></i>
+            Back to Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
