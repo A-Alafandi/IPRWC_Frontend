@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 
 
-app.use(express.static(path.join(__dirname, 'dist/iprwc-e-commerce-frontend'), {
+app.use(express.static(path.join(__dirname, 'dist/ipwrwc-e-commerce-frontend'), {
   index: false // Don't serve index.html for directory requests
 }));
 
@@ -15,7 +15,7 @@ app.get('*', (req, res) => {
   }
 
   // Only serve index.html for route requests (no file extension)
-  res.sendFile(path.join(__dirname, 'dist/iprwc-e-commerce-frontend/index.html'));
+  res.sendFile(path.join(__dirname, 'dist/ipwrwc-e-commerce-frontend/index.html'));
 });
 
 const port = process.env.PORT || 3000;
