@@ -4,10 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "build": "ng build --configuration production",
+    "build": "ng build --configuration production --no-prerender",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:prod": "ng build --configuration production",
+    "build:prod": "ng build --configuration production --no-prerender",
     "railway:build": "npm run build:prod",
     "railway:start": "node server.js"
   },
